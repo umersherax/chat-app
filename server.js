@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
 
 //  db connection
 mongoose
-  .connect('mongodb://localhost/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect('mongodb://localhost:27017/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected..."))
   .catch((err) => console.log(err));
 
