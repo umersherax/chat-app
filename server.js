@@ -118,10 +118,10 @@ io.on('connection', (socket) => {
   });
 
 //  db connection
-mongoose
-  .connect('mongodb://localhost/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connected..."))
-  .catch((err) => console.log(err));
+// mongoose
+//   .connect('mongodb://localhost/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => console.log("Connected..."))
+//   .catch((err) => console.log(err));
 
   if (process.env.NODE_ENV === "production") {
     // Set static folder
