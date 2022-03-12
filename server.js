@@ -117,7 +117,6 @@ io.on('connection', (socket) => {
     console.log('listening on *:8080');
   });
 
-
 //  db connection
 mongoose
   .connect('mongodb://localhost/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
