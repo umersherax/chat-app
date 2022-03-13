@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./database/user.modal');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config()
 
 
 app.use(cors());
@@ -121,7 +121,7 @@ io.on('connection', (socket) => {
 
 //  db connection
 mongoose
-  .connect('mongodb+srv://umersheraxi:dXe0DMf7IifxLb4N@cluster0.kcis5.mongodb.net/chat-app?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected..."))
   .catch((err) => console.log(err));
 

@@ -1,5 +1,5 @@
 import React from "react";
-import {Dashboar, Register} from "./components/signup";
+import {Login, Register} from "./components/signup";
 import Dashboar from "./components/dashboard";
 import Chat from "./components/chat/Chat";
 import {
@@ -13,8 +13,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboar />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboar />} />
           <Route path="/chat/:id/:name" element={<Chat />} />
 
         </Routes>
