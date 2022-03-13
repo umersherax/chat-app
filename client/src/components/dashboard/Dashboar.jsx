@@ -37,7 +37,7 @@ export default function Dashboar() {
     }
     return (
         <div>
-            <h1>Hello {user?.name} your account status is {user?.isAdmin ? "Admin" : "not admin"}</h1>
+            <h1 className='container mt-5 mb-5'>Hello {user?.name}</h1>
             <Users allUsers={allUsers}/>
         </div>
     )

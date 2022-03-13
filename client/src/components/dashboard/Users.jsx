@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Users({ allUsers }) {
   const [data, setData] = useState([]);
   const redirect = useNavigate();
+  const currentUser = localStorage.getItem("userId");
 
   useEffect(() => {
     setData(allUsers);
@@ -15,9 +16,10 @@ export default function Users({ allUsers }) {
   return (
     <div className="container">
       <h1>All Users</h1>
-      <ul className="list-group ">
-        {data.map((user) => (
-          <li className="list-group-item bg-dark text-light">
+      <ul className="list-group mt-5">
+        {data.map((user, index) => (
+          currentUser !== user._id &&
+          <li className="list-group-item bg-dark text-light" key={index}>
             <div className="d-flex flex-row justify-content-between">
               <p>{user.name}</p>
               <button

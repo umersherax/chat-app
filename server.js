@@ -116,10 +116,12 @@ io.on('connection', (socket) => {
   const port = process.env.PORT || 8080
   server.listen(port, ()=> console.log("server running..."));
 
+  
+
 
 //  db connection
 mongoose
-  .connect('mongodb://localhost:27017/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect('mongodb+srv://umersheraxi:dXe0DMf7IifxLb4N@cluster0.kcis5.mongodb.net/chat-app?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected..."))
   .catch((err) => console.log(err));
 
