@@ -15,7 +15,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboar />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboar />} />
           <Route path="/chat/:id/:name" element={<Chat />} />
 
         </Routes>
