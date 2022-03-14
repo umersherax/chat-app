@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./database/user.modal');
+const Chat = require('./database/chat.modal');
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
@@ -40,6 +42,7 @@ app.post('/register', async (req, res)=>{
           const token = jwt.sign({name: user.name,email: user.email}, 'secret123');
           const newUser = {
             user: user._id,
+            userName: user.name,
             token
           }
           res.json({status: 'ok', newUser });
@@ -60,6 +63,7 @@ app.post('/login', async (req, res)=>{
            } , 'secret123');
            const newUser = {
             user: found._id,
+            userName: found.name,
             token
           }
           res.json({status: "ok", newUser});
@@ -87,27 +91,54 @@ app.get('/get-info', async (req,res)=>{
 io.on('connection', (socket) => {
     socket.emit('welcome','welcome new user');
 
-    socket.on('join-room',room=>{
-      // if(!myRooms.includes(room)){
-      //   myRooms.push(room);
-      // }
-      console.log("room joined",room)
+    socket.on('join-room', async room=>{
       const msgTo = room.msgTo;
+      const msgFrom = room.msgFrom;
       socket.join(msgTo);
+      const all_chats = await Chat.find({ $or: [ { sender: msgFrom , receiver: msgTo  } , { sender: msgTo , receiver: msgFrom} ]});
+      socket.emit("my-chats",all_chats);
     });
 
-    socket.on('message',(user)=>{
-      console.log("sent message to room no",myRooms);
-      io.to(user.msgTo).to(user.msgFrom).emit('rec',user.msg)
+    socket.on('message', async (user)=>{
+      const chatObj = {
+        currentUser: user.msgFrom,
+        msg_to: user.msgTo,
+        msg: user.msg,
+        senderName: user.msgFromName
+      }
+
+      io.to(user.msgTo).to(user.msgFrom).emit('rec',chatObj);
+
+      var newChat = {
+        currentUser: user.msgFrom,
+        msg: user.msg,
+        senderName: user.msgFromName,
+        exactTime: Date.now()
+      }
+
+
+      const findInbox = await Chat.find({ $or: [ { sender: user.msgFrom , receiver: user.msgTo  } , { sender: user.msgTo , receiver: user.msgFrom} ]    });
+      if(!findInbox.length){
+        await Chat.create({
+          sender: user.msgFrom,
+          receiver: user.msgTo,
+          message: newChat,
+        });
+      }
+      else{
+        await Chat.updateOne(
+          { $or: [{sender: user.msgFrom, receiver: user.msgTo},{ sender: user.msgTo , receiver: user.msgFrom} ] }, 
+          { $push: { "message": newChat }},
+        )
+      }
+
     });
 
     socket.on('remove-room',id=>{
       const index = myRooms.indexOf(id);
-      console.log(index);
       if(index > -1){
         myRooms.splice(index,1);
       }
-      console.log("new room people",myRooms);
     });
 
 

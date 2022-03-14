@@ -46,6 +46,7 @@ export default function useApis(values) {
             console.log(res.data)
             localStorage.setItem('token',res.data.newUser.token);
             localStorage.setItem('userId',res.data.newUser.user);
+            localStorage.setItem('userName',res.data.newUser.userName);
 
             navigate('/dashboard');
         }else{
