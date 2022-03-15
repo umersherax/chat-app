@@ -86,7 +86,16 @@ app.get('/get-info', async (req,res)=>{
   }catch(err){
       res.json({ valid: false, err })
   }
+});
+
+
+app.get('/get-inbox/:id', async (req,res)=>{
+  const userId = req.params.id;
+  const myChats = await Chat.find({ $or: [{ sender: userId } , {receiver: userId} ] });
+  res.send(myChats);
 })
+
+
 
 io.on('connection', (socket) => {
     socket.emit('welcome','welcome new user');
