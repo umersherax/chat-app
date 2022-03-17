@@ -139,10 +139,6 @@ io.on('connection', (socket) => {
         msg: user.msg,
         senderName: user.msgFromName
       }
-      console.log(user.msgTo);
-      console.log(user.msgFrom);
-
-
       io.to(user.msgTo).to(user.msgFrom).emit('rec',chatObj);
 
       var newChat = {
@@ -167,7 +163,6 @@ io.on('connection', (socket) => {
           { $push: { "message": newChat }},
         )
       }
-
     });
 
     socket.on('remove-room',id=>{

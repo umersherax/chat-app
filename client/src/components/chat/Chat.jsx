@@ -34,7 +34,9 @@ export default function Chat() {
   },[msgs])
 
   socket.on('my-chats',chats=>{
-    setMsgs(chats[0].message);
+    if(chats?.length > 0){
+      setMsgs(chats[0].message);
+    }
   })
 
   socket.on("rec", (val) => {
