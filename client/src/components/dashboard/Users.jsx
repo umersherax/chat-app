@@ -11,7 +11,7 @@ export default function Users({ allUsers }) {
     setData(allUsers);
   }, [allUsers]);
   const startChat = (user) => {
-    redirect(`/chat/${user._id}/${user.name}`);
+    redirect(`/inbox/${user._id}/${user.name}`);
   };
   return (
     <div className="container">

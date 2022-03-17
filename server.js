@@ -100,6 +100,29 @@ app.get('/get-inbox/:id', async (req,res)=>{
 io.on('connection', (socket) => {
     socket.emit('welcome','welcome new user');
 
+    //game
+
+    socket.on('join-game', async room=>{
+      const player1 = room.p1;
+      socket.join(player1);
+      socket.emit("joined",player1);
+    });
+
+    socket.on('new-move', move => {
+      io.to(move.currentUser).to(move.p2).emit("rec",move);
+    });
+
+    socket.on('new-game',(move)=>{
+      io.to(move.currentUser).to(move.p2).emit("finish-it");
+    })
+
+    //game end
+
+
+
+
+    // chat
+
     socket.on('join-room', async room=>{
       const msgTo = room.msgTo;
       const msgFrom = room.msgFrom;

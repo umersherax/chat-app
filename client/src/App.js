@@ -20,7 +20,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboar />} />
           <Route path="/chat/:id/:name" element={<Chat />} />
-          <Route path="/inbox" element={<Inbox/>}/>
+          <Route path="/inbox/:id/:name" element={<Inbox/>}/>
 
         </Routes>
       </BrowserRouter>

@@ -1,11 +1,13 @@
 import React from "react";
 
 export default function index() {
+  const currentUser = localStorage.getItem("userName");
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <a className="navbar-brand" href="/">
-          Chat eng
+          Chat eng - {currentUser}
         </a>
         <button
           className="navbar-toggler"
