@@ -3,6 +3,7 @@ import "./inbox.css";
 import { useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import { baseUrl } from "../../common/constants";
+var count = 0;
 const Inbox = () => {
   const socket = io(baseUrl);
 
@@ -50,7 +51,11 @@ const Inbox = () => {
   });
 
   const checkWin = () => {
+    count++;
     var cnt, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7, cnt8;
+
+    var x = '<i class="fa fa-times"></i>';
+    var y = '<i class="fa fa-dot-circle-o"></i>';
 
     cnt = document.getElementById("1").innerHTML;
     cnt1 = document.getElementById("2").innerHTML;
@@ -61,34 +66,38 @@ const Inbox = () => {
     cnt6 = document.getElementById("7").innerHTML;
     cnt7 = document.getElementById("8").innerHTML;
     cnt8 = document.getElementById("9").innerHTML;
+    console.log(cnt,cnt1);
 
     if (
-      (cnt == "X" && cnt1 == "X" && cnt2 == "X") ||
-      (cnt == "X" && cnt3 == "X" && cnt6 == "X") ||
-      (cnt1 == "X" && cnt4 == "X" && cnt7 == "X") ||
-      (cnt2 == "X" && cnt5 == "X" && cnt8 == "X") ||
-      (cnt3 == "X" && cnt4 == "X" && cnt5 == "X") ||
-      (cnt6 == "X" && cnt7 == "X" && cnt8 == "X") ||
-      (cnt2 == "X" && cnt5 == "X" && cnt8 == "X") ||
-      (cnt2 == "X" && cnt4 == "X" && cnt6 == "X") ||
-      (cnt == "X" && cnt4 == "X" && cnt8 == "X")
+      (cnt === x && cnt1 === x && cnt2 === x) ||
+      (cnt === x && cnt3 === x && cnt6 === x) ||
+      (cnt1 === x && cnt4 === x && cnt7 === x) ||
+      (cnt2 === x && cnt5 === x && cnt8 === x) ||
+      (cnt3 === x && cnt4 === x && cnt5 === x) ||
+      (cnt6 === x && cnt7 === x && cnt8 === x) ||
+      (cnt2 === x && cnt5 === x && cnt8 === x) ||
+      (cnt2 === x && cnt4 === x && cnt6 === x) ||
+      (cnt === x && cnt4 === x && cnt8 === x)
     ) {
       setError(`${random[0]} won`);
       setPlayer("Game Over");
     }
     if (
-      (cnt == "0" && cnt1 == "0" && cnt2 == "0") ||
-      (cnt == "0" && cnt3 == "0" && cnt6 == "0") ||
-      (cnt1 == "0" && cnt4 == "0" && cnt7 == "0") ||
-      (cnt2 == "0" && cnt5 == "0" && cnt8 == "0") ||
-      (cnt3 == "0" && cnt4 == "0" && cnt5 == "0") ||
-      (cnt6 == "0" && cnt7 == "0" && cnt8 == "0") ||
-      (cnt2 == "0" && cnt5 == "0" && cnt8 == "0") ||
-      (cnt2 == "0" && cnt4 == "0" && cnt6 == "0") ||
-      (cnt == "0" && cnt4 == "0" && cnt8 == "0")
+      (cnt === y && cnt1 === y && cnt2 === y) ||
+      (cnt === y && cnt3 === y && cnt6 === y) ||
+      (cnt1 === y && cnt4 === y && cnt7 === y) ||
+      (cnt2 === y && cnt5 === y && cnt8 === y) ||
+      (cnt3 === y && cnt4 === y && cnt5 === y) ||
+      (cnt6 === y && cnt7 === y && cnt8 === y) ||
+      (cnt2 === y && cnt5 === y && cnt8 === y) ||
+      (cnt2 === y && cnt4 === y && cnt6 === y) ||
+      (cnt === y && cnt4 === y && cnt8 === y)
     ) {
       setError(`${random[1]} won`);
       setPlayer("Game Over");
+    } else if (count === 9 && player !== "Game Over") {
+      setPlayer("Game Over");
+      setError(`DRAW !`);
     }
   };
 
@@ -107,41 +116,47 @@ const Inbox = () => {
 
   return (
     <center>
-      <h1>
-        {player} {player !== "Game Over" && "turn"}
-      </h1>
-      <table className="mt-5">
+      <div className="d-flex flex-row justify-content-center mt-5">
+        <h1 style={{ marginRight: 5 }}>
+          <i className="fa fa-user" />
+        </h1>
+        <h1>
+          {player} {player !== "Game Over" && "Turn"}
+        </h1>
+      </div>
+
+      <table className="mt-5 custom-table">
         <tr>
           {[1, 2, 3].map((arr, index) => (
-            <td key={index} onClick={() => played(arr)}>
-              <p className="text-center" id={arr}>
-                {move.map((s, i) => s.id === arr && s.tick)}
-              </p>
+            <td className="custom-td" key={index} onClick={() => played(arr)}>
+              <h1 className="text-center text-info" id={arr}>
+                {move.map((s) => s.id === arr && (s.tick === 'X' ? <i className="fa fa-times" /> : <i className="fa fa-dot-circle-o"/> ))}
+              </h1>
             </td>
           ))}
         </tr>
         <tr>
           {[4, 5, 6].map((arr, index) => (
-            <td key={index} onClick={() => played(arr)}>
-              <p className="text-center" id={arr}>
-                {move.map((s, i) => s.id === arr && s.tick)}
-              </p>
+            <td className="custom-td" key={index} onClick={() => played(arr)}>
+              <h1 className="text-center text-info" id={arr}>
+                  {move.map((s) => s.id === arr && (s.tick === 'X' ? <i className="fa fa-times" /> : <i className="fa fa-dot-circle-o"/> ))}
+              </h1>
             </td>
           ))}
         </tr>
         <tr>
           {[7, 8, 9].map((arr, index) => (
-            <td key={index} onClick={() => played(arr)}>
-              <p className="text-center" id={arr}>
-                {move.map((s, i) => s.id === arr && s.tick)}
-              </p>
+            <td className="custom-td" key={index} onClick={() => played(arr)}>
+              <h1 className="text-center text-info" id={arr}>
+                {move.map((s) => s.id === arr && (s.tick === 'X' ? <i className="fa fa-times" /> : <i className="fa fa-dot-circle-o"/> ))}
+              </h1>
             </td>
           ))}
         </tr>
       </table>
       <p className="text-danger mt-4">{error}</p>
       <br />
-      <button id="result" class="st" onClick={refresh}>
+      <button id="result" className="st" onClick={refresh}>
         New Game
       </button>
       <br />

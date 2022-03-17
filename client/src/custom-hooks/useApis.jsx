@@ -22,7 +22,6 @@ export default function useApis(values) {
                 return;
             }
         }
-        console.log(form)
         setError(false);
         postData(form);
     }
@@ -40,7 +39,6 @@ export default function useApis(values) {
 
     async function postData(request){
         const res = await baseRequest(request);
-        console.log(res);
         if(res.data.status === 'ok'){
             localStorage.setItem('token',res.data.newUser.token);
             localStorage.setItem('userId',res.data.newUser.user);

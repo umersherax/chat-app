@@ -129,6 +129,7 @@ io.on('connection', (socket) => {
       socket.join(msgTo);
       const all_chats = await Chat.find({ $or: [ { sender: msgFrom , receiver: msgTo  } , { sender: msgTo , receiver: msgFrom} ]});
       socket.emit("my-chats",all_chats);
+
     });
 
     socket.on('message', async (user)=>{
@@ -138,6 +139,9 @@ io.on('connection', (socket) => {
         msg: user.msg,
         senderName: user.msgFromName
       }
+      console.log(user.msgTo);
+      console.log(user.msgFrom);
+
 
       io.to(user.msgTo).to(user.msgFrom).emit('rec',chatObj);
 

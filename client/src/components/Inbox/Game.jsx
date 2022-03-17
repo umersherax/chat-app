@@ -21,7 +21,7 @@ export default function Game() {
         </tr>
       </table>
       <br />
-      <button id="result" class="st">
+      <button id="result" className="st">
         In progress
       </button>
       <br />

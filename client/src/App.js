@@ -2,7 +2,7 @@ import React from "react";
 import {Login, Register} from "./components/signup";
 import Dashboar from "./components/dashboard";
 import Chat from "./components/chat/Chat";
-import Navbar from './components/navbar';
+import Navbar from './components/navbar/Navbar';
 import Inbox from "./components/Inbox";
 import {
   BrowserRouter,
@@ -13,8 +13,9 @@ import {
 function App() {
   return (
     <div className="App">
-      <Navbar/>
       <BrowserRouter>
+      <Navbar/>
+
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
