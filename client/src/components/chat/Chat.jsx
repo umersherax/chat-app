@@ -34,6 +34,7 @@ export default function Chat() {
   },[msgs])
 
   socket.on('my-chats',chats=>{
+    console.log(chats);
     if(chats?.length > 0){
       setMsgs(chats[0].message);
     }
@@ -57,11 +58,6 @@ export default function Chat() {
     setVal("");
   };
 
-  useEffect(()=>{
-    return () => {
-      socket.emit('remove-room',getPath[2]);
-    }
-  },[])
 
   return (
     <div>

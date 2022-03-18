@@ -20,7 +20,7 @@ const Inbox = () => {
   const [player, setPlayer] = useState(random[0]);
 
   useEffect(() => {
-    const userToJoin = { p1: currentUser };
+    const userToJoin = { currentUser, p2: getPath[3] };
     socket.emit("join-game", userToJoin);
   }, []);
 
@@ -30,6 +30,9 @@ const Inbox = () => {
     }
     const overRideMove = move.filter((e) => e.id === id).length > 0;
     const isMyTurn = currentUser === player;
+    console.log(overRideMove,"x");
+    console.log(isMyTurn,"y");
+
     if (!overRideMove && isMyTurn) {
       setError("");
       const myTurn = {
