@@ -7,13 +7,14 @@ import Inbox from "./components/Inbox";
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  HashRouter as Router,
 } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <Router>
       <Navbar/>
 
         <Routes>
@@ -24,7 +25,7 @@ function App() {
           <Route path="/inbox/:id/:name" element={<Inbox/>}/>
 
         </Routes>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }
