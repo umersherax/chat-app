@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import useFrom from "../../custom-hooks/useForm";
 import useApis from "../../custom-hooks/useApis";
 import { useNavigate } from "react-router-dom";
-
+import { Button } from 'react-bootstrap';
 export default function Login() {
 
   const redirect = useNavigate();
@@ -49,12 +49,12 @@ export default function Login() {
         </div>
         <p className="text-danger">{error && "Form cannot be empty"}</p>
 
-        <button
+        <Button
           onClick={(e) => submit({ route: "login" }, e)}
           className="btn btn-primary btn-small"
         >
           Login
-        </button>
+        </Button>
       </form>
     </div>
   );

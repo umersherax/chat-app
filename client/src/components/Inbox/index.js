@@ -3,15 +3,20 @@ import "./inbox.css";
 import { useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import { baseUrl } from "../../common/constants";
+import { useNavigate } from "react-router-dom";
+
 var count = 0;
 const Inbox = () => {
   const socket = io(baseUrl);
+  const redirect = useNavigate();
 
   const [move, setMove] = useState([]);
   const [error, setError] = useState("");
   const { pathname } = useLocation();
   const getPath = pathname.split("/");
   const currentUser = localStorage.getItem("userName");
+  const currentUserId = localStorage.getItem("userId");
+
 
   const users = [currentUser, getPath[3]];
 
@@ -19,10 +24,26 @@ const Inbox = () => {
 
   const [player, setPlayer] = useState(random[0]);
 
+
+  socket.once('kicked-out',users => {
+    if(currentUserId === users.p2){
+      redirect('/dashboard');
+    }
+  });
+
   useEffect(() => {
-    const userToJoin = { currentUser, p2: getPath[3] };
+    const userToJoin = { currentUserId, p2: getPath[2] };
     socket.emit("join-game", userToJoin);
   }, []);
+  
+
+  useEffect(()=>{
+    return () => {
+      const usersToKick = { currentUserId, p2: getPath[2] };
+      socket.emit('out-of-game', usersToKick);
+      
+    }
+  },[])
 
   const played = (id) => {
     if (player === "Game Over") {
@@ -30,16 +51,16 @@ const Inbox = () => {
     }
     const overRideMove = move.filter((e) => e.id === id).length > 0;
     const isMyTurn = currentUser === player;
-    console.log(overRideMove,"x");
-    console.log(isMyTurn,"y");
 
     if (!overRideMove && isMyTurn) {
       setError("");
       const myTurn = {
         currentUser,
+        p2Name: getPath[3],
+        currentUserId,
         id,
         tick: move.length % 2 === 0 ? "X" : "0",
-        p2: getPath[3],
+        p2: getPath[2],
       };
       socket.emit("new-move", myTurn);
     } else {
@@ -48,7 +69,8 @@ const Inbox = () => {
   };
 
   socket.on("rec", (myTurn) => {
-    setPlayer(myTurn.p2);
+    console.log(myTurn);
+    setPlayer(myTurn.p2Name);
     setMove((move) => [...move, myTurn]);
     checkWin();
   });
@@ -69,7 +91,6 @@ const Inbox = () => {
     cnt6 = document.getElementById("7").innerHTML;
     cnt7 = document.getElementById("8").innerHTML;
     cnt8 = document.getElementById("9").innerHTML;
-    console.log(cnt,cnt1);
 
     if (
       (cnt === x && cnt1 === x && cnt2 === x) ||
@@ -84,6 +105,7 @@ const Inbox = () => {
     ) {
       setError(`${random[0]} won`);
       setPlayer("Game Over");
+      count=0;
     }
     if (
       (cnt === y && cnt1 === y && cnt2 === y) ||
@@ -98,6 +120,7 @@ const Inbox = () => {
     ) {
       setError(`${random[1]} won`);
       setPlayer("Game Over");
+      count=0;
     } else if (count === 9 && player !== "Game Over") {
       setPlayer("Game Over");
       setError(`DRAW !`);
@@ -106,8 +129,8 @@ const Inbox = () => {
 
   const refresh = () => {
     const finish = {
-      currentUser,
-      p2: getPath[3],
+      currentUserId,
+      p2: getPath[2],
     };
     socket.emit("new-game", finish);
   };

@@ -1,14 +1,42 @@
-import React from "react";
+import React, {useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import { baseUrl } from "../../common/constants";
+import { Modal, Button } from "react-bootstrap";
 
 export default function Navbar() {
   const currentUser = localStorage.getItem("userName");
+  const currentUserId = localStorage.getItem("userId");
+  const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState('');
+
   const redirect = useNavigate();
+  const socket = io(baseUrl);
+
 
   const logout = () => {
     localStorage.clear();
     redirect("/");
   };
+
+  socket.on('request-sent',user=>{
+    const id = user._id;
+    if(id === currentUserId){
+      setShowModal(true);
+      setUser(user);
+    }
+  });
+
+  const accept = (flag) => {
+    if(flag){
+      socket.emit('request-accepted',user);
+      setShowModal(false);
+      redirect(`/inbox/${user?.currentUserId}/${user?.requestFrom}`);
+    }else{
+      socket.emit('reject-request', user);
+      setShowModal(false);
+    }
+  }
 
   return (
     <div>
@@ -64,6 +92,24 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+
+      <Modal show={showModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Game <i className="fa fa-gamepad" aria-hidden="true"/> Request</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{user?.requestFrom} just sent a game request to you</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={()=>accept(false)}>
+            No
+          </Button>
+          <Button variant="primary" onClick={()=>accept(true)}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
     </div>
   );
 }

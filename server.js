@@ -102,24 +102,57 @@ app.get("/get-inbox/:id", async (req, res) => {
 io.on("connection", (socket) => {
   socket.emit("welcome", "welcome new user");
 
-  //game
+  // game logic starts here
+
+  socket.on("send-request", async (user) => {
+    const { _id } = user;
+    const checkGameStatus = myGames?.filter(
+      (game) =>
+        (game.currentUserId === _id || game.p2 === _id)
+    );
+    const len = checkGameStatus.length;
+    if (len > 0) {
+      socket.emit("already-playing");
+    } else {
+      socket.broadcast.emit("request-sent", user);
+    }
+  });
+
+  socket.on("reject-request", (user) => {
+    socket.broadcast.emit("reject-it", user);
+  });
+
+  socket.on("out-of-game", async (users) => {
+    const {currentUserId} = users;
+    const kickOut = myGames.filter((game) => game.currentUserId === currentUserId);
+    const len = kickOut.length;
+    if(len > 1){
+      const index = myGames.indexOf(kickOut[0]);
+      myGames.splice(0, index); 
+    }
+    if( len === 1 ){
+      myGames.pop();
+    }
+    socket.broadcast.emit('kicked-out', users);
+  });
+
+  socket.on("request-accepted", async (user) => {
+    socket.broadcast.emit("accepted", user);
+  });
 
   socket.on("join-game", async (room) => {
-    const currentUser = room.currentUser;
-    const p2 = room.p2;
-
+    const {currentUserId, p2} = room;
     const gameRoom = {
-      currentUser,
+      currentUserId,
       p2,
-      id: socket.id
-    }
-
+      id: socket.id,
+    };
     var fnds;
     if (myGames?.length) {
       fnds = myGames.filter(
         (f) =>
-          (f.currentUser === currentUser && f.p2 === p2) ||
-          (f.currentUser === p2 && f.p2 === currentUser)
+          (f.currentUserId === currentUserId && f.p2 === p2) ||
+          (f.currentUserId === p2 && f.p2 === currentUserId)
       );
     }
     if (!fnds?.length) {
@@ -127,33 +160,32 @@ io.on("connection", (socket) => {
     }
     const lastJoin = fnds?.length ? fnds[0].id : gameRoom.id;
     socket.join(lastJoin);
-  });
+  })
 
   socket.on("new-move", (move) => {
-    console.log(myGames);
-
     const found = myGames.filter(
       (f) =>
-        (f.currentUser === move.currentUser && f.p2 === move.p2) ||
-        (f.currentUser === move.p2 && f.p2 === move.currentUser)
+        (f.currentUserId === move.currentUserId && f.p2 === move.p2) ||
+        (f.currentUserId === move.p2 && f.p2 === move.currentUserId)
     );
-    console.log("id",found);
     io.to(found[0]?.id).emit("rec", move);
   });
 
   socket.on("new-game", (move) => {
     const found = myGames.filter(
       (f) =>
-        (f.currentUser === move.currentUser && f.p2 === move.p2) ||
-        (f.currentUser === move.p2 && f.p2 === move.currentUser)
+        (f.currentUserId === move.currentUserId && f.p2 === move.p2) ||
+        (f.currentUserId === move.p2 && f.p2 === move.currentUserId)
     );
     io.to(found[0]?.id).emit("finish-it");
   });
 
-  //game end
+  //game logic ends here
 
-  // chat
 
+
+
+  // chat logic starts here
   socket.on("join-room", async (room) => {
     const msgTo = room.msgTo;
     const msgFrom = room.msgFrom;
@@ -245,9 +277,7 @@ mongoose
   .catch((err) => console.log(err));
 
 if (process.env.NODE_ENV === "production") {
-  // Set static folder
   app.use(express.static("client/build"));
-
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });

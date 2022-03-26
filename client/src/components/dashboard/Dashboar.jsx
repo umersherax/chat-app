@@ -43,12 +43,7 @@ export default function Dashboar() {
         </center>
         
       ) : (
-        <div>
-          <h1 className="container mt-5 mb-5">
-            Hello {localStorage.getItem("userName")}
-            <hr/>
-          </h1>
-          
+        <div className="mt-5">
           <Users allUsers={allUsers} />
         </div>
       )}

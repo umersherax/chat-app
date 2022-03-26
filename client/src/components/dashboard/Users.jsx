@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Confirm from "./Confirm";
 
 export default function Users({ allUsers }) {
   const [data, setData] = useState([]);
   const redirect = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [type, setType] = useState("");
   const currentUser = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -11,20 +14,36 @@ export default function Users({ allUsers }) {
   }, [allUsers]);
 
   const startChat = (user) => {
-    redirect(`/chat/${user._id}/${user.name}`);
+    setIsOpen(true);
+    const dataType = {
+      user,
+      type: "chat"
+    }
+    setType(dataType);
+    // redirect(`/chat/${user._id}/${user.name}`);
   };
 
   const startGame = (user) => {
-    redirect(`/inbox/${user._id}/${user.name}`);
+    const dataType = {
+      user,
+      type: "game"
+    }
+    setType(dataType);
+    setIsOpen(true);
+    // redirect(`/inbox/${user._id}/${user.name}`);
   };
+
+  const loadingStatus = () => {
+    setIsOpen(prev => !prev);
+  }
 
   return (
     <div className="container">
       <h1>
         {" "}
-        <i className="fa fa-table" aria-hidden="true"></i> All Users
+        <i className="fa fa-user" aria-hidden="true"></i> ALL USERS
       </h1>
-      <table className="table table-dark table-hover table-borderless" s>
+      <table className="table table-dark table-hover table-borderless mt-5">
         <thead>
           <tr>
             <th className="p-3" scope="col">#</th>
@@ -57,6 +76,7 @@ export default function Users({ allUsers }) {
           )}
         </tbody>
       </table>
+      {isOpen && <Confirm type={type} loadingStatus={loadingStatus} isOpen={isOpen} />}
     </div>
   );
 }
