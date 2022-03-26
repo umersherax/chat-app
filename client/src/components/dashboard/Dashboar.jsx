@@ -1,44 +1,52 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Users from './Users';
-import { baseUrl } from '../../common/constants';
-import { io } from "socket.io-client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Users from "./Users";
+import { baseUrl } from "../../common/constants";
 
 export default function Dashboar() {
-    const redirect = useNavigate();
-    const [user, setInfo] = useState('');
-    const [allUsers, setAllUsers] = useState([]);
-    const socket = io(baseUrl);
+  const redirect = useNavigate();
+  const [allUsers, setAllUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(()=>{
-        getInfo();
-    },[]);
+  useEffect(() => {
+    setLoading(true);
+    getInfo();
+  }, []);
 
-    const getInfo = async () => {
-        const loggedIn = await axios.get(`${baseUrl}get-info`, {
-            headers: {
-                'x-access-token': localStorage.getItem('token')
-            }
-        });
-        if(loggedIn.data.valid === false){
-            redirect('/')
-        }else{
-            setInfo(loggedIn.data.info);
-            console.log(loggedIn.data.info._id);
-            const allUsers = await axios.get(`${baseUrl}all-users`, {
-                headers: {
-                    'x-access-token': localStorage.getItem('token')
-                }
-            });
-            setAllUsers(allUsers.data);
-        }
-
+  const getInfo = async () => {
+    const loggedIn = await axios.get(`${baseUrl}get-info`, {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    });
+    if (loggedIn.data.valid === false) {
+      redirect("/");
+    } else {
+      const allUsers = await axios.get(`${baseUrl}all-users`, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      });
+      setAllUsers(allUsers.data);
     }
-    return (
-        <div>
-            <h1 className='container mt-5 mb-5'>Hello {user?.name}</h1>
-            <Users allUsers={allUsers}/>
+
+    setLoading(false);
+  };
+  return (
+    <div>
+      {loading ? (
+        <center>
+          <h1 style={{ marginTop: 250, fontSize: 100 }}>
+            <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+          </h1>
+        </center>
+        
+      ) : (
+        <div className="mt-5">
+          <Users allUsers={allUsers} />
         </div>
-    )
+      )}
+    </div>
+  );
 }

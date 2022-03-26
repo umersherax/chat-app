@@ -14,6 +14,7 @@ export default function Chat() {
   const getPath = pathname.split("/");
   const currentUser = localStorage.getItem("userId");
   const currentUserName = localStorage.getItem("userName");
+  const messagesEndRef = React.useRef(null);
 
   
   useEffect(() => {
@@ -24,13 +25,25 @@ export default function Chat() {
     socket.emit("join-room", userToJoin);
   }, [pathname]);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(()=>{
+    scrollToBottom();
+  },[msgs])
+
   socket.on('my-chats',chats=>{
-    setMsgs(chats[0].message);
+    console.log(chats);
+    if(chats?.length > 0){
+      setMsgs(chats[0].message);
+    }
   })
 
   socket.on("rec", (val) => {
     setMsgs(msgs=> [...msgs, val ]);
   });
+
 
 
   const send = (e) => {
@@ -45,28 +58,25 @@ export default function Chat() {
     setVal("");
   };
 
-  useEffect(()=>{
-    return () => {
-      socket.emit('remove-room',getPath[2]);
-    }
-  },[])
 
   return (
     <div>
-      <h1>{getPath[3]}</h1>
+      <h1> <i className="fa fa-user" aria-hidden="true"></i> {getPath[3]}</h1>
       <hr/>
       <ul className="list-group list-group-flush">
         {msgs.map((msg, index) => (
-          <li key={index} className="list-group-item">
-            <p className={` ${currentUser === msg.currentUser ? 'float-end' : 'float-start'} bg-info p-3 rounded-pill text-white`}>{msg.msg}</p>
+          <li key={index} className="list-group-item" >
+            <p className={`${currentUser === msg.currentUser ? 'float-end' : 'float-start'} bg-info p-3 rounded-pill text-white`}>{msg.msg}</p>
             </li>
         ))}
       </ul>
+      <div ref={messagesEndRef}/>
+       
 
       <form id="form">
         <input
           id="input"
-          autocomplete="off"
+          autoComplete="off"
           value={val}
           onChange={(e) => setVal(e.target.value)}
         />

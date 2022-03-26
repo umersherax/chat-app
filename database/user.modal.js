@@ -18,7 +18,7 @@ const User = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    }
+    },
 },
 {
     collection: 'user-data'

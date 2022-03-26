@@ -22,7 +22,6 @@ export default function useApis(values) {
                 return;
             }
         }
-        console.log(form)
         setError(false);
         postData(form);
     }
@@ -30,7 +29,6 @@ export default function useApis(values) {
     const baseRequest = async (request) => {
         const {token, route} = request;
         const fullUrl = `${baseUrl}${route}`;
-        console.log(fullUrl)
         return await Axios.post(fullUrl,values,{
             headers: {
                 'x-access-token': token || ''
@@ -41,9 +39,7 @@ export default function useApis(values) {
 
     async function postData(request){
         const res = await baseRequest(request);
-        console.log(res);
         if(res.data.status === 'ok'){
-            console.log(res.data)
             localStorage.setItem('token',res.data.newUser.token);
             localStorage.setItem('userId',res.data.newUser.user);
             localStorage.setItem('userName',res.data.newUser.userName);
@@ -53,5 +49,5 @@ export default function useApis(values) {
             alert('User not found');
         }
     }
-    return [submit, error, postData];
+    return [submit, error, postData, baseRequest];
 }
